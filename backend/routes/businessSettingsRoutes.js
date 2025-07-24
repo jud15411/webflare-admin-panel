@@ -6,7 +6,6 @@ import { getSettings, updateSettings} from '../controllers/businessSettingsContr
 
 const router = express.Router();
 
-router.get('/public', getPublicBusinessSettings);
 
 router.route('/')
     // CORRECTED: Changed getBusinessSettings to getSettings
