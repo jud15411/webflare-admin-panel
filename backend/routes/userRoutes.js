@@ -1,19 +1,30 @@
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
-import { hasRole } from '../middleware/roleMiddleware.js';
-import { getUsers, createUser, updateUser, deleteUser } from '../controllers/userController.js';
+import {
+  protect,
+  admin,
+  checkObjectId,
+} from '../middleware/authMiddleware.js';
+import {
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  getUserProfile,
+  updateUserProfile,
+} from '../controllers/userController.js';
 
 const router = express.Router();
 
-// Apply CEO-only protection to all routes in this file
-router.use(protect, hasRole('ceo', 'cto'));
+router.route('/').get(protect, admin, getUsers);
+router.route('/profile').get(protect, getUserProfile);
 
-router.route('/')
-    .get(getUsers)
-    .post(createUser);
+// Corrected Route
+router.route('/profile/:id').put(protect, updateUserProfile);
 
-router.route('/:id')
-    .put(updateUser)
-    .delete(deleteUser);
+router
+  .route('/:id')
+  .get(protect, admin, checkObjectId, getUserById)
+  .put(protect, admin, checkObjectId, updateUser)
+  .delete(protect, admin, checkObjectId, deleteUser);
 
 export default router;

@@ -4,6 +4,6 @@ import { createCheckoutSession } from '../controllers/stripeController.js';
 
 const router = express.Router();
 
-router.post('/create-checkout-session', protect, createCheckoutSession);
+router.route('/create-checkout-session').post(protect, createCheckoutSession);
 
 export default router;

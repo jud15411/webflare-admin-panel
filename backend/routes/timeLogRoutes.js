@@ -19,6 +19,6 @@ router.post('/', createTimeLog);
 router.get('/mylogs', getMyTimeLogs);
 
 // Only CEO and CTO can get all time logs from every user
-router.get('/', hasRole('ceo', 'cto'), getAllTimeLogs);
+router.route('/').get(hasRole('ceo', 'cto'), getAllTimeLogs);
 
 export default router;
