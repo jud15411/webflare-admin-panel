@@ -4,6 +4,7 @@ import { hasRole } from '../middleware/roleMiddleware.js';
 import { getSummaryReport } from '../controllers/reportController.js';
 
 const router = express.Router();
+
 router.use(protect, hasRole('ceo'));
 
 // CORRECTED: Chained the route handler
