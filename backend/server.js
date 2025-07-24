@@ -39,7 +39,23 @@ const app = express();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // Middleware
-app.use(cors()); // Allow requests from your Netlify frontend
+const allowedOrigins = [
+  'http://localhost:3000', // For local development
+  process.env.CLIENT_URL, // Your deployed frontend URL
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies to be sent
+};
+
+app.use(cors(corsOptions));
 app.use(express.json()); // To accept JSON data in the body
 
 // Simple test route
