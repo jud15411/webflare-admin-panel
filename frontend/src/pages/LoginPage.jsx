@@ -24,7 +24,19 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // ... (logic for standard email/password login remains the same)
+    try {
+      // Send a POST request to your backend login endpoint
+      const { data } = await axios.post('/api/auth/login', { email, password });
+      
+      // Call the login function from your AuthContext
+      login(data);
+      
+      // Navigate to the dashboard on successful login
+      navigate('/dashboard');
+    } catch (error) {
+      // Display an error message if login fails
+      alert(error.response?.data?.message || 'Invalid email or password.');
+    }
   };
 
   return (
