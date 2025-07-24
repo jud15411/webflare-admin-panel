@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 import connectDB from './config/db.js';
+import fs from 'fs';
 import authRoutes from './routes/authRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
@@ -58,6 +59,20 @@ app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
 app.use(express.json());
 
+
+
+const routesPath = path.join(__dirname, 'routes');
+const routeFiles = fs.readdirSync(routesPath).filter(file => file.endsWith('.js'));
+
+console.log('--- Loading Routes ---');
+routeFiles.forEach(file => {
+  console.log(`Loading: ${file}`);
+  const route = require(path.join(routesPath, file)); // Note: Using require for simplicity here
+  app.use(`/api/${file.replace('Routes.js', '')}`, route.default || route);
+});
+console.log('--- All Routes Loaded ---');
+
+/*
 // Routes
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/auth', authRoutes);
@@ -79,7 +94,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', businessSettingsRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/stripe', stripeRoutes);
-
+*/
 // Simple test route
 app.get('/', (req, res) => {
   res.send('API is running...');
