@@ -5,7 +5,7 @@ import { getCeoDashboardSummary } from '../controllers/dashboardController.js';
 
 const router = express.Router();
 
-// Protect all dashboard routes for CEO only
-router.get('/ceo', protect, hasRole('ceo'), getCeoDashboardSummary);
+// Corrected Route Definition
+router.route('/ceo').get(protect, hasRole('ceo'), getCeoDashboardSummary);
 
 export default router;
