@@ -36,37 +36,29 @@ connectDB();
 
 const app = express();
 
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
-
 // Middleware
 const allowedOrigins = [
-  'http://localhost:3000', // For local development
-  process.env.CLIENT_URL, // Your deployed frontend URL
+  'http://localhost:3000',
+  process.env.CLIENT_URL,
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, // Allow cookies to be sent
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
-app.use(express.json()); // To accept JSON data in the body
+app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
-// Simple test route
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+app.use(express.json());
 
-
-
-
-// TODO: Add your API routes here
+// Routes
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
@@ -88,7 +80,10 @@ app.use('/api/settings', businessSettingsRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/stripe', stripeRoutes);
 
-
+// Simple test route
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
 
 const PORT = process.env.PORT || 5000;
 
