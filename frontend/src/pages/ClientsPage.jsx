@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ClientFormModal from '../components/ClientFormModal'; // <-- Import the modal
 import ConfirmModal from '../components/ConfirmModal'; 
+import api from '../api/axios';
 
 const ClientsPage = () => {
   const [clients, setClients] = useState([]);
@@ -14,7 +15,7 @@ const ClientsPage = () => {
 
   const fetchClients = async () => {
     const config = { headers: { Authorization: `Bearer ${user.token}` } };
-    const { data } = await axios.get('/api/clients', config);
+    const { data } = await api.get('/api/clients', config);
     setClients(data);
   };
 
@@ -36,10 +37,10 @@ const ClientsPage = () => {
     const config = { headers: { Authorization: `Bearer ${user.token}` } };
     if (editingClient) {
       // Update existing client
-      await axios.put(`/api/clients/${editingClient._id}`, formData, config);
+      await api.put(`/api/clients/${editingClient._id}`, formData, config);
     } else {
       // Create new client
-      await axios.post('/api/clients', formData, config);
+      await api.post('/api/clients', formData, config);
     }
     fetchClients(); // Refresh the client list
     handleCloseModal();
@@ -53,7 +54,7 @@ const ClientsPage = () => {
   const handleConfirmDelete = async () => {
     try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        await axios.delete(`/api/clients/${clientToDelete}`, config);
+        await api.delete(`/api/clients/${clientToDelete}`, config);
         fetchClients(); // Refresh the client list
     } catch (error) {
         alert('Failed to delete client.');

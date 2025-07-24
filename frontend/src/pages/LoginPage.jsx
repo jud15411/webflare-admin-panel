@@ -4,6 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
 import './LoginPage.css'; // <-- New dedicated CSS file
+import api from '../api/axios';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ const LoginPage = () => {
   const handleGoogleSuccess = async (response) => {
     try {
       const { credential } = response;
-      const { data } = await axios.post('/api/auth/google', { credential });
+      const { data } = await api.post('/api/auth/google', { credential });
       login(data);
       navigate('/dashboard');
     } catch (error) {
@@ -26,7 +27,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       // Send a POST request to your backend login endpoint
-      const { data } = await axios.post('/api/auth/login', { email, password });
+      const { data } = await api.post('/api/auth/login', { email, password });
       
       // Call the login function from your AuthContext
       login(data);
