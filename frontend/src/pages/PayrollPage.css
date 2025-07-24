@@ -1,0 +1,32 @@
+
+.date-filter-controls {
+    display: flex;
+    align-items: center; /* This will vertically center all items */
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Target the Generate Payroll button specifically within the filter controls */
+.date-filter-controls .btn-primary {
+    margin-left: auto; /* This pushes the button to the far right */
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.table-header h3 {
+    margin: 0;
+}
+
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    font-size: 1.1em;
+}

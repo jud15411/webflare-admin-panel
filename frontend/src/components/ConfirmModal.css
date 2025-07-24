@@ -1,0 +1,23 @@
+/* We can reuse the main modal overlay from ClientFormModal.css */
+@import url('./ClientFormModal.css');
+
+.confirm-modal {
+    max-width: 450px; /* A bit smaller for a confirmation */
+    text-align: center;
+}
+
+.confirm-modal h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+
+.confirm-modal p {
+    color: #666;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+.confirm-modal .form-actions {
+    justify-content: center; /* Center the buttons */
+}

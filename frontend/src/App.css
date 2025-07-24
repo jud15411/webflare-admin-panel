@@ -1,0 +1,325 @@
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #282c34;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  align-items: left;
+  gap: 10px;
+}
+
+.sidebar nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1em;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.sidebar nav a:hover {
+  background-color: #4a505c;
+}
+
+.sidebar button {
+    margin-top: auto; /* Pushes logout button to the bottom */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #61dafb;
+}
+
+.main-content {
+  flex-grow: 1; /* Takes up the remaining space */
+  padding: 20px;
+  overflow-y: auto; /* Allows scrolling if content is long */
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.login-form {
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+}
+
+.login-form h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #282c34;
+}
+
+.login-form input {
+  margin-bottom: 15px;
+  padding: 12px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-form button {
+  padding: 12px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #61dafb;
+  color: #282c34;
+  font-weight: bold;
+}
+
+.page-container {
+  padding: 20px 30px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+/* Professional Table Styles */
+.table-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.pro-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pro-table th, .pro-table td {
+  padding: 15px;
+  text-align: left;
+}
+
+.pro-table thead {
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.pro-table th {
+  font-weight: 600;
+  color: #555;
+}
+
+.pro-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pro-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Status Badge */
+.status {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.status-active { background-color: #e6f7ff; color: #1890ff; }
+.status-lead { background-color: #fffbe6; color: #faad14; }
+.status-inactive { background-color: #f6f6f6; color: #8c8c8c; }
+
+
+/* Buttons */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.btn-primary { background-color: #007bff; color: white; }
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-danger { background-color: #dc3545; color: white; }
+.btn-sm { padding: 5px 10px; font-size: 0.8em; margin-right: 5px; }
+
+.nav-dropdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.1em;
+}
+
+.nav-dropdown-toggle:hover {
+  background-color: #4a505c;
+}
+
+.nav-dropdown-toggle .arrow {
+  font-size: 0.7em;
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-dropdown-toggle .arrow.open {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-toggle span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adds space between icon and text */
+}
+
+.nav-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px; /* Indent dropdown links */
+  margin-top: 5px;
+}
+
+.nav-dropdown-menu a {
+  padding: 8px 10px;
+  font-size: 1em; /* Slightly smaller font */
+  opacity: 0.8;
+}
+
+.nav-dropdown-menu a:hover {
+  opacity: 1;
+  background-color: #4a505c;
+}
+
+.status-not-started {
+  background-color: #f0f2f5; /* Light grey */
+  color: #595959;
+}
+
+.status-in-progress {
+  background-color: #e6f7ff; /* Light blue */
+  color: #1890ff;
+}
+
+.status-completed {
+  background-color: #f6ffed; /* Light green */
+  color: #52c41a;
+}
+
+.status-on-hold {
+  background-color: #fffbe6; /* Light yellow/orange */
+  color: #faad14;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  font-family: inherit; /* Ensures it uses the same font as inputs */
+  resize: vertical; /* Allows user to resize vertically but not horizontally */
+}
+
+.status-draft {
+  background-color: #f6f6f6;
+  color: #8c8c8c;
+}
+.status-sent {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+.status-paid {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+.status-overdue {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.status-ceo {
+  background-color: #f5f5f5;
+  color: #262626;
+  border: 1px solid #d9d9d9;
+}
+.status-cto {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+.status-sales {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+.status-developer {
+  background-color: #fffbe6;
+  color: #faad14;
+}
+
+.date-filter-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.date-filter-controls .form-group {
+    margin-bottom: 0;
+}
+
+/* Proposal Statuses */
+.status-accepted {
+  background-color: #f6ffed; /* Light green */
+  color: #52c41a;
+}
+.status-declined {
+  background-color: #fff1f0; /* Light red */
+  color: #f5222d;
+}
+
+/* Subscription Statuses */
+.status-paused {
+  background-color: #fffbe6; /* Light yellow/orange */
+  color: #faad14;
+}
+.status-canceled {
+  background-color: #f5f5f5; /* Grey */
+  color: #262626;
+}
+
+.status-pending-approval { background-color: #fffbe6; color: #faad14; }
+.status-approved { background-color: #f6ffed; color: #52c41a; }
+.status-sent { background-color: #e6f7ff; color: #1890ff; }
+.status-failed { background-color: #fff1f0; color: #f5222d; }
