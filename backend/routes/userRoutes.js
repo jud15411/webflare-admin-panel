@@ -1,30 +1,23 @@
 import express from 'express';
-import {
-  protect,
-  admin,
-  checkObjectId,
-} from '../middleware/authMiddleware.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { hasRole } from '../middleware/roleMiddleware.js'; // You'll need this
 import {
   getUsers,
-  getUserById,
+  createUser,
   updateUser,
   deleteUser,
-  getUserProfile,
-  updateUserProfile,
 } from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.route('/').get(protect, admin, getUsers);
-router.route('/profile').get(protect, getUserProfile);
+// This middleware will apply to all routes in this file.
+// It first checks if the user is authenticated (protect).
+// Then it checks if the user has the role of 'ceo' or 'cto'.
+router.use(protect, hasRole('ceo', 'cto'));
 
-// Corrected Route
-router.route('/profile/:id').put(protect, updateUserProfile);
+// Define the routes
+router.route('/').get(getUsers).post(createUser);
 
-router
-  .route('/:id')
-  .get(protect, admin, checkObjectId, getUserById)
-  .put(protect, admin, checkObjectId, updateUser)
-  .delete(protect, admin, checkObjectId, deleteUser);
+router.route('/:id').put(updateUser).delete(deleteUser);
 
 export default router;
