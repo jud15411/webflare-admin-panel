@@ -4,8 +4,9 @@ import { hasRole } from '../middleware/roleMiddleware.js';
 import { generatePayrollReport } from '../controllers/payrollController.js';
 
 const router = express.Router();
+router.use(protect, hasRole('ceo'));
 
-// Only the CEO can generate payroll reports
-router.route('/').get(protect, hasRole('ceo'), generatePayrollReport);
+// CORRECTED: Chained the route handler
+router.route('/').get(generatePayrollReport);
 
 export default router;

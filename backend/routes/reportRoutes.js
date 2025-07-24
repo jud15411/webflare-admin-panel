@@ -4,11 +4,9 @@ import { hasRole } from '../middleware/roleMiddleware.js';
 import { getSummaryReport } from '../controllers/reportController.js';
 
 const router = express.Router();
-
-// Protect all report routes for CEO only
 router.use(protect, hasRole('ceo'));
 
-// Corrected Route Definition
+// CORRECTED: Chained the route handler
 router.route('/summary').get(getSummaryReport);
 
 export default router;

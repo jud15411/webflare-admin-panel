@@ -60,7 +60,7 @@ app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 app.use(express.json());
 
 
-
+/*
 const routesPath = path.join(__dirname, 'routes');
 const routeFiles = fs.readdirSync(routesPath).filter(file => file.endsWith('.js'));
 
@@ -71,8 +71,8 @@ routeFiles.forEach(file => {
   app.use(`/api/${file.replace('Routes.js', '')}`, route.default || route);
 });
 console.log('--- All Routes Loaded ---');
+*/
 
-/*
 // Routes
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use('/api/auth', authRoutes);
@@ -94,7 +94,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', businessSettingsRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/stripe', stripeRoutes);
-*/
+
 // Simple test route
 app.get('/', (req, res) => {
   res.send('API is running...');
