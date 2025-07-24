@@ -8,6 +8,7 @@ const router = express.Router();
 // Protect all report routes for CEO only
 router.use(protect, hasRole('ceo'));
 
-router.get('/summary', getSummaryReport);
+// Corrected Route Definition
+router.route('/summary').get(getSummaryReport);
 
 export default router;
