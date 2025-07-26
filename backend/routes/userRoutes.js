@@ -6,6 +6,9 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  verifyPassword,      
+  transferOwnership,   
+  wipeUserData
 } from '../controllers/userController.js';
 
 const router = express.Router();

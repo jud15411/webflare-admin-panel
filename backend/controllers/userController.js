@@ -109,3 +109,24 @@ export const transferOwnership = async (req, res) => {
 
     res.status(200).json({ message: 'Ownership transferred successfully.' });
 };
+
+// @desc    Wipe a specific user's data (anonymize and delete)
+// @route   DELETE /api/users/:id/wipe-data
+export const wipeUserData = async (req, res) => {
+    const userIdToDelete = req.params.id;
+    const userToDelete = await User.findById(userIdToDelete);
+    if (!userToDelete) {
+        return res.status(404).json({ message: 'User not found.' });
+    }
+    if (userToDelete.role === 'ceo') {
+        return res.status(400).json({ message: 'Cannot wipe the CEO account.' });
+    }
+    try {
+        await TimeLog.updateMany({ user: userIdToDelete }, { $set: { user: null } });
+        await Project.updateMany({ managedBy: userIdToDelete }, { $set: { managedBy: null } });
+        await userToDelete.deleteOne();
+        res.status(200).json({ message: `Data for user ${userToDelete.name} has been wiped.` });
+    } catch (error) {
+        res.status(500).json({ message: 'User data wipe failed.', error: error.message });
+    }
+};

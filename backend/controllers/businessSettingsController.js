@@ -9,7 +9,7 @@ import TimeLog from '../models/TimeLog.js';
 import Proposal from '../models/Proposal.js';
 import Expense from '../models/Expense.js'
 import Task from '../models/Task.js'
-import Subscription from '../models/subscription.js'
+import Subscription from '../models/Subscription.js'
 
 // @desc    Get the business settings
 export const getSettings = async (req, res) => {
