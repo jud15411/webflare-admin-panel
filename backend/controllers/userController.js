@@ -72,6 +72,40 @@ export const deleteUser = async (req, res) => {
         return res.status(400).json({ message: 'Cannot delete the CEO account.' });
     }
 
-    await user.remove();
+    await user.deleteOne();
     res.json({ message: 'User removed successfully.' });
+};
+
+// @route   POST /api/users/verify-password
+export const verifyPassword = async (req, res) => {
+    const { password } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+        res.status(200).json({ message: 'Password verified successfully' });
+    } else {
+        res.status(401).json({ message: 'Invalid password' });
+    }
+};
+
+// @desc    Transfer CEO ownership to another user
+// @route   PUT /api/users/transfer-ownership
+export const transferOwnership = async (req, res) => {
+    const { newCeoId } = req.body;
+    const currentCeo = await User.findById(req.user.id);
+    const newCeo = await User.findById(newCeoId);
+
+    if (!newCeo) {
+        return res.status(404).json({ message: 'New CEO user not found.' });
+    }
+
+    // Demote current CEO to developer
+    currentCeo.role = 'developer';
+    await currentCeo.save();
+
+    // Promote new user to CEO
+    newCeo.role = 'ceo';
+    await newCeo.save();
+
+    res.status(200).json({ message: 'Ownership transferred successfully.' });
 };

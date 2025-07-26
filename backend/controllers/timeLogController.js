@@ -60,3 +60,18 @@ export const getAllTimeLogs = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
+export const deleteTimeLog = async (req, res) => {
+    try {
+        const timeLog = await TimeLog.findById(req.params.id);
+
+        if (timeLog) {
+            await timeLog.deleteOne(); // <-- This is the corrected line
+            res.json({ message: 'Time log removed' });
+        } else {
+            res.status(404).json({ message: 'Time log not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+};

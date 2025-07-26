@@ -1,7 +1,9 @@
+// pages/TimeTrackingPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import './SettingsPage.css';
+import api from '../api/axios';
+import ConfirmModal from '../components/ConfirmModal'; // <-- Import the modal
 
 const TimeTrackingPage = () => {
     const [projects, setProjects] = useState([]);
@@ -14,18 +16,19 @@ const TimeTrackingPage = () => {
     });
     const { user } = useContext(AuthContext);
 
+    // --- NEW: State for the confirmation modal ---
+    const [isConfirmOpen, setConfirmOpen] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
+
     const fetchPageData = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             
-            // Fetch projects for the dropdown
-            const { data: projectData } = await axios.get('/api/projects', config);
+            const { data: projectData } = await api.get('/api/projects', config);
             setProjects(projectData);
 
-            // --- THIS IS THE UPDATED LOGIC ---
-            // Determine which endpoint to use based on user role
             const logsEndpoint = user.role === 'ceo' ? '/api/timelogs' : '/api/timelogs/mylogs';
-            const { data: logData } = await axios.get(logsEndpoint, config);
+            const { data: logData } = await api.get(logsEndpoint, config);
             setTimeLogs(logData);
 
         } catch (error) {
@@ -47,14 +50,33 @@ const TimeTrackingPage = () => {
         e.preventDefault();
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('/api/timelogs', formData, config);
+            await api.post('/api/timelogs', formData, config);
             alert('Time logged successfully!');
-            fetchPageData(); // Refresh all page data
-            // Reset form
+            fetchPageData();
             setFormData({ ...formData, hours: '', description: '' });
         } catch (error) {
             alert('Failed to log time.');
             console.error(error);
+        }
+    };
+    
+    // --- NEW: Functions to handle deletion ---
+    const handleDeleteRequest = (id) => {
+        setDeletingId(id);
+        setConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            await api.delete(`/api/timelogs/${deletingId}`, config);
+            fetchPageData(); // Refresh the logs
+        } catch (error) {
+            alert('Failed to delete time log.');
+            console.error(error);
+        } finally {
+            setConfirmOpen(false);
+            setDeletingId(null);
         }
     };
 
@@ -67,6 +89,7 @@ const TimeTrackingPage = () => {
             <div className="settings-card">
                 <h3>New Time Entry</h3>
                 <form onSubmit={handleSubmit}>
+                    {/* ... form content is the same ... */}
                     <div className="form-group">
                         <label>Project</label>
                         <select name="project" value={formData.project} onChange={handleChange} required>
@@ -89,11 +112,11 @@ const TimeTrackingPage = () => {
                      <thead>
                          <tr>
                              <th>Date</th>
-                             {/* Conditionally show Team Member column for CEO */}
                              {user.role === 'ceo' && <th>Team Member</th>}
                              <th>Project</th>
                              <th>Hours</th>
                              <th>Description</th>
+                             {user.role === 'ceo' && <th>Actions</th>} {/* <-- Add Actions header for CEO */}
                          </tr>
                      </thead>
                      <tbody>
@@ -104,11 +127,28 @@ const TimeTrackingPage = () => {
                                  <td>{log.project?.name || 'N/A'}</td>
                                  <td>{log.hours}</td>
                                  <td>{log.description}</td>
+                                 {/* --- Add Delete button for CEO --- */}
+                                 {user.role === 'ceo' && (
+                                     <td>
+                                         <button onClick={() => handleDeleteRequest(log._id)} className="btn btn-danger btn-sm">
+                                             Delete
+                                         </button>
+                                     </td>
+                                 )}
                              </tr>
                          ))}
                      </tbody>
                  </table>
             </div>
+
+            {/* --- Add the confirmation modal to the page --- */}
+            <ConfirmModal
+                isOpen={isConfirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Time Log"
+                message="Are you sure you want to permanently delete this time entry?"
+            />
         </div>
     );
 };

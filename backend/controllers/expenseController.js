@@ -36,7 +36,7 @@ export const deleteExpense = async (req, res) => {
     try {
         const expense = await Expense.findById(req.params.id);
         if (expense) {
-            await expense.remove();
+            await expense.deleteOne();
             res.json({ message: 'Expense removed' });
         } else {
             res.status(404).json({ message: 'Expense not found' });

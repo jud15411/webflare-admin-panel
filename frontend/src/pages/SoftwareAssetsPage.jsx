@@ -1,8 +1,9 @@
+// pages/SoftwareAssetsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import SoftwareAssetFormModal from '../components/SoftwareAssetFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const SoftwareAssetsPage = () => {
     const [assets, setAssets] = useState([]);
@@ -14,7 +15,7 @@ const SoftwareAssetsPage = () => {
 
     const fetchAssets = async () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get('/api/software', config);
+        const { data } = await api.get('/api/software', config);
         setAssets(data);
     };
 
@@ -23,9 +24,9 @@ const SoftwareAssetsPage = () => {
     const handleSave = async (formData) => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         if (editingAsset) {
-            await axios.put(`/api/software/${editingAsset._id}`, formData, config);
+            await api.put(`/api/software/${editingAsset._id}`, formData, config);
         } else {
-            await axios.post('/api/software', formData, config);
+            await api.post('/api/software', formData, config);
         }
         fetchAssets();
         setFormOpen(false);
@@ -34,7 +35,7 @@ const SoftwareAssetsPage = () => {
     const handleDeleteRequest = (id) => { setDeletingId(id); setConfirmOpen(true); };
     const handleConfirmDelete = async () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        await axios.delete(`/api/software/${deletingId}`, config);
+        await api.delete(`/api/software/${deletingId}`, config);
         fetchAssets();
         setConfirmOpen(false);
         setDeletingId(null);

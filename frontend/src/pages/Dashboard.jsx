@@ -1,10 +1,10 @@
+// pages/Dashboard.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import './ReportsPage.css'; // Reuse stat card styles
-import './Dashboard.css';    // New dedicated CSS for the dashboard
+import './ReportsPage.css';
+import './Dashboard.css';
+import api from '../api/axios';
 
-// --- Reusable StatCard Component ---
 const StatCard = ({ title, value, icon }) => (
     <div className="stat-card">
         <div className="stat-card-icon">{icon}</div>
@@ -15,14 +15,13 @@ const StatCard = ({ title, value, icon }) => (
     </div>
 );
 
-// --- CEO's Dashboard View ---
 const CeoDashboard = ({ user }) => {
     const [summary, setSummary] = useState(null);
 
     useEffect(() => {
         const fetchSummary = async () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('/api/dashboard/ceo', config);
+            const { data } = await api.get('/api/dashboard/ceo', config);
             setSummary(data);
         };
         if (user) fetchSummary();
@@ -39,14 +38,13 @@ const CeoDashboard = ({ user }) => {
                 <div className="dashboard-column">
                     <h3>Recent Activity</h3>
                     <ul className="activity-feed">
-                        {summary?.activityFeed.map((item, index) => (
+                        {summary?.activityFeed?.map((item, index) => (
                             <li key={index}><strong>{item.type}:</strong> {item.text} <span>{new Date(item.date).toLocaleDateString()}</span></li>
                         ))}
                     </ul>
                 </div>
                 <div className="dashboard-column">
                     <h3>Projects Overview</h3>
-                    {/* A great place to add a chart component */}
                     <p>Project status chart would go here.</p>
                 </div>
             </div>
@@ -54,14 +52,13 @@ const CeoDashboard = ({ user }) => {
     );
 };
 
-// --- Team Member's Dashboard View ---
 const TeamDashboard = ({ user }) => {
     const [myTasks, setMyTasks] = useState([]);
 
     useEffect(() => {
         const fetchTasks = async () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('/api/tasks', config); // Fetches tasks assigned to the logged-in user
+            const { data } = await api.get('/api/tasks', config);
             setMyTasks(data);
         };
         if (user) fetchTasks();
@@ -75,7 +72,7 @@ const TeamDashboard = ({ user }) => {
                     {myTasks.filter(t => t.status !== 'Done').map(task => (
                         <li key={task._id}>
                             <strong>{task.title}</strong>
-                            <span> for {task.project.name}</span>
+                            <span> for {task.project?.name}</span>
                             <span className={`status status-${task.status.toLowerCase().replace(' ', '-')}`}>{task.status}</span>
                         </li>
                     ))}
@@ -89,7 +86,6 @@ const TeamDashboard = ({ user }) => {
     );
 };
 
-// --- Main Dashboard Component ---
 const Dashboard = () => {
     const { user } = useContext(AuthContext);
 
@@ -98,7 +94,6 @@ const Dashboard = () => {
             <div className="page-header">
                 <h1>Dashboard</h1>
             </div>
-            {/* Conditionally render the correct dashboard based on user role */}
             {user?.role === 'ceo' ? <CeoDashboard user={user} /> : <TeamDashboard user={user} />}
         </div>
     );

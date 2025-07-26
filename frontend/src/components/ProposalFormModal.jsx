@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios'; // <-- Import the new api instance
 import './ClientFormModal.css';
 
 const ProposalFormModal = ({ isOpen, onClose, onSave, proposalData, userToken }) => {
@@ -9,7 +9,8 @@ const ProposalFormModal = ({ isOpen, onClose, onSave, proposalData, userToken })
     useEffect(() => {
         const fetchClients = async () => {
             const config = { headers: { Authorization: `Bearer ${userToken}` } };
-            const { data } = await axios.get('/api/clients', config);
+            // --- THIS IS THE UPDATED LINE ---
+            const { data } = await api.get('/api/clients', config);
             setClients(data);
         };
         if (isOpen) fetchClients();

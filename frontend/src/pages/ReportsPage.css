@@ -11,6 +11,15 @@
     padding: 25px;
     display: flex;
     align-items: center;
+    text-align: left; /* Ensure text aligns left in a button */
+    border: none; /* Remove default button border */
+    cursor: pointer; /* Add pointer cursor on hover */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .stat-card-icon {

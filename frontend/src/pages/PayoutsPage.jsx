@@ -1,8 +1,9 @@
+// pages/PayoutsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import PayoutRequestModal from '../components/PayoutRequestModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const PayoutsPage = () => {
     const [payouts, setPayouts] = useState([]);
@@ -13,7 +14,7 @@ const PayoutsPage = () => {
 
     const fetchPayouts = async () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get('/api/payouts', config);
+        const { data } = await api.get('/api/payouts', config);
         setPayouts(data);
     };
 
@@ -22,7 +23,7 @@ const PayoutsPage = () => {
     const handleRequestSave = async (formData) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post('/api/payouts', formData, config);
+            await api.post('/api/payouts', formData, config);
             fetchPayouts();
             setRequestModalOpen(false);
         } catch (error) { alert('Failed to request payout.'); }
@@ -36,7 +37,7 @@ const PayoutsPage = () => {
     const handleConfirmApproval = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.post(`/api/payouts/${payoutToApprove._id}/approve`, {}, config);
+            await api.put(`/api/payouts/${payoutToApprove._id}/approve`, {}, config);
             fetchPayouts();
         } catch (error) {
             alert('Approval failed. See console for details.');

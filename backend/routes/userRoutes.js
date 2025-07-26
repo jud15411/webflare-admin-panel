@@ -20,4 +20,7 @@ router.route('/').get(getUsers).post(createUser);
 
 router.route('/:id').put(updateUser).delete(deleteUser);
 
+router.post('/verify-password', protect, verifyPassword); // New route for password verification
+router.put('/transfer-ownership', protect, hasRole('ceo'), transferOwnership); // New route for transferring ownership
+
 export default router;

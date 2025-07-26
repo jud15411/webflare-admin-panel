@@ -1,8 +1,9 @@
+// pages/ExpensesPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ExpenseFormModal from '../components/ExpenseFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const ExpensesPage = () => {
     const [expenses, setExpenses] = useState([]);
@@ -15,7 +16,7 @@ const ExpensesPage = () => {
     const fetchExpenses = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('/api/expenses', config);
+            const { data } = await api.get('/api/expenses', config);
             setExpenses(data);
         } catch (error) { console.error('Failed to fetch expenses', error); }
     };
@@ -28,9 +29,9 @@ const ExpensesPage = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             if (editingExpense) {
-                await axios.put(`/api/expenses/${editingExpense._id}`, formData, config);
+                await api.put(`/api/expenses/${editingExpense._id}`, formData, config);
             } else {
-                await axios.post('/api/expenses', formData, config);
+                await api.post('/api/expenses', formData, config);
             }
             fetchExpenses();
             setFormOpen(false);
@@ -41,7 +42,7 @@ const ExpensesPage = () => {
     const handleConfirmDelete = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`/api/expenses/${deletingId}`, config);
+            await api.delete(`/api/expenses/${deletingId}`, config);
             fetchExpenses();
         } catch (error) { alert('Failed to delete expense.'); }
         finally { setConfirmOpen(false); setDeletingId(null); }

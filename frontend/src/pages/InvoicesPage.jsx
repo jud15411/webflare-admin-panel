@@ -1,8 +1,9 @@
+// pages/InvoicesPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import InvoiceFormModal from '../components/InvoiceFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const InvoicesPage = () => {
     const [invoices, setInvoices] = useState([]);
@@ -15,7 +16,7 @@ const InvoicesPage = () => {
     const fetchInvoices = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('/api/invoices', config);
+            const { data } = await api.get('/api/invoices', config);
             setInvoices(data);
         } catch (error) { console.error('Failed to fetch invoices', error); }
     };
@@ -26,9 +27,9 @@ const InvoicesPage = () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         try {
             if (editingInvoice) {
-                await axios.put(`/api/invoices/${editingInvoice._id}`, formData, config);
+                await api.put(`/api/invoices/${editingInvoice._id}`, formData, config);
             } else {
-                await axios.post('/api/invoices', formData, config);
+                await api.post('/api/invoices', formData, config);
             }
             fetchInvoices();
             setFormOpen(false);
@@ -44,7 +45,7 @@ const InvoicesPage = () => {
     const handleConfirmDelete = async () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         try {
-            await axios.delete(`/api/invoices/${deletingId}`, config);
+            await api.delete(`/api/invoices/${deletingId}`, config);
             fetchInvoices();
         } catch (error) { alert('Failed to delete invoice.'); }
         finally { setConfirmOpen(false); setDeletingId(null); }
@@ -53,8 +54,7 @@ const InvoicesPage = () => {
     const handleGetPaymentLink = async (invoiceId) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post('/api/stripe/create-checkout-session', { invoiceId }, config);
-            // Copy link to clipboard and alert user
+            const { data } = await api.post('/api/stripe/create-checkout-session', { invoiceId }, config);
             navigator.clipboard.writeText(data.url);
             alert(`Payment link copied to clipboard:\n\n${data.url}`);
         } catch (error) {

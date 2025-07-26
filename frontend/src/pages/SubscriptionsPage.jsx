@@ -1,8 +1,9 @@
+// pages/SubscriptionsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import SubscriptionFormModal from '../components/SubscriptionFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const SubscriptionsPage = () => {
     const [subscriptions, setSubscriptions] = useState([]);
@@ -15,7 +16,7 @@ const SubscriptionsPage = () => {
     const fetchSubscriptions = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('/api/subscriptions', config);
+            const { data } = await api.get('/api/subscriptions', config);
             setSubscriptions(data);
         } catch (error) { console.error('Failed to fetch subscriptions', error); }
     };
@@ -26,9 +27,9 @@ const SubscriptionsPage = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             if (editingSub) {
-                await axios.put(`/api/subscriptions/${editingSub._id}`, formData, config);
+                await api.put(`/api/subscriptions/${editingSub._id}`, formData, config);
             } else {
-                await axios.post('/api/subscriptions', formData, config);
+                await api.post('/api/subscriptions', formData, config);
             }
             fetchSubscriptions();
             setFormOpen(false);
@@ -39,7 +40,7 @@ const SubscriptionsPage = () => {
     const handleConfirmDelete = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`/api/subscriptions/${deletingId}`, config);
+            await api.delete(`/api/subscriptions/${deletingId}`, config);
             fetchSubscriptions();
         } catch (error) { alert('Failed to delete subscription.'); }
         finally { setConfirmOpen(false); setDeletingId(null); }

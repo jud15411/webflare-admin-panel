@@ -87,7 +87,7 @@ export const deleteClient = async (req, res) => {
             // Note: You might also want to delete TimeLogs associated with these projects
 
             // 4. Finally, delete the client itself
-            await client.remove();
+            await client.deleteOne();
 
             res.json({ message: 'Client and all associated data have been handled.' });
         } else {

@@ -40,7 +40,7 @@ export const deleteSubscription = async (req, res) => {
     try {
         const subscription = await Subscription.findById(req.params.id);
         if (subscription) {
-            await subscription.remove();
+            await subscription.deleteOne();
             res.json({ message: 'Subscription removed' });
         } else {
             res.status(404).json({ message: 'Subscription not found' });

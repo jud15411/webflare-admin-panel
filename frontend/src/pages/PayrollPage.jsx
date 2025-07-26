@@ -1,10 +1,11 @@
+// pages/PayrollPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import './ReportsPage.css'; // Reuse stat card styles
-import './PayrollPage.css'; // New dedicated CSS for this page
+import Papa from 'papaparse'; // <-- Import the new library
+import './ReportsPage.css';
+import './PayrollPage.css';
+import api from '../api/axios';
 
-// Reusable StatCard component for consistency
 const StatCard = ({ title, value, icon }) => (
     <div className="stat-card">
         <div className="stat-card-icon">{icon}</div>
@@ -14,7 +15,6 @@ const StatCard = ({ title, value, icon }) => (
         </div>
     </div>
 );
-
 
 const PayrollPage = () => {
     const [reportData, setReportData] = useState([]);
@@ -35,7 +35,7 @@ const PayrollPage = () => {
                 headers: { Authorization: `Bearer ${user.token}` },
                 params: { startDate, endDate },
             };
-            const { data } = await axios.get('/api/payroll', config);
+            const { data } = await api.get('/api/payroll', config);
             setReportData(data);
         } catch (error) {
             console.error("Failed to generate payroll report", error);
@@ -45,21 +45,48 @@ const PayrollPage = () => {
         }
     };
 
-    // Calculate summary stats whenever the report data changes
     useEffect(() => {
         const totalPayout = reportData.reduce((sum, item) => sum + item.totalPay, 0);
         const totalHours = reportData.reduce((sum, item) => sum + item.totalHours, 0);
         const teamMembers = reportData.length;
         setSummary({ totalPayout, totalHours, teamMembers });
     }, [reportData]);
+    
+    // --- NEW: Function to handle CSV export ---
+    const handleExport = () => {
+        if (reportData.length === 0) {
+            alert("There is no data to export.");
+            return;
+        }
+
+        // Prepare the data for CSV conversion
+        const csvData = reportData.map(item => ({
+            "Team Member": item.name,
+            "Total Hours": item.totalHours.toFixed(2),
+            "Hourly Rate": item.hourlyRate.toFixed(2),
+            "Total Pay": item.totalPay.toFixed(2)
+        }));
+
+        // Convert data to CSV string
+        const csv = Papa.unparse(csvData);
+
+        // Create a blob and trigger a download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `payroll_report_${startDate}_to_${endDate}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <div className="page-container">
             <div className="page-header">
                 <h1>Payroll Report</h1>
             </div>
-
-            {/* Filter Section */}
             <div className="settings-card" style={{ marginBottom: '30px' }}>
                 <h3>Select Pay Period</h3>
                 <div className="date-filter-controls">
@@ -76,19 +103,16 @@ const PayrollPage = () => {
                     </button>
                 </div>
             </div>
-
-             {/* Summary Section */}
              <div className="stat-cards-grid" style={{ marginBottom: '30px' }}>
                 <StatCard title="Total Payout" value={`$${summary.totalPayout.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} icon="💰" />
                 <StatCard title="Total Hours Logged" value={summary.totalHours.toFixed(2)} icon="⏱️" />
                 <StatCard title="Team Members" value={summary.teamMembers} icon="👥" />
             </div>
-
-            {/* Results Table */}
             <div className="table-container">
                  <div className="table-header">
                     <h3>Payroll Details</h3>
-                    <button className="btn btn-secondary btn-sm">Export to CSV</button>
+                    {/* Attach the new handleExport function to the button */}
+                    <button className="btn btn-secondary btn-sm" onClick={handleExport}>Export to CSV</button>
                 </div>
                 {loading ? (
                     <div className="loading-state">Loading report data...</div>

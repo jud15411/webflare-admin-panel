@@ -1,8 +1,9 @@
+// pages/TeamPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import UserFormModal from '../components/UserFormModal'; // <-- Import the new modal
+import UserFormModal from '../components/UserFormModal';
 import './TeamPage.css';
+import api from '../api/axios';
 
 const TeamPage = () => {
   const [users, setUsers] = useState([]);
@@ -13,9 +14,8 @@ const TeamPage = () => {
 
   const fetchUsers = async () => {
     const config = { headers: { Authorization: `Bearer ${loggedInUser.token}` } };
-    const { data } = await axios.get('/api/users', config);
+    const { data } = await api.get('/api/users', config);
     setUsers(data);
-    // Find if a CEO or CTO already exists for the form logic
     const ceo = data.find(u => u.role === 'ceo');
     const cto = data.find(u => u.role === 'cto');
     setExistingRoles({ ceo: ceo?._id, cto: cto?._id });
@@ -28,10 +28,10 @@ const TeamPage = () => {
   const handleSaveUser = async (formData, userId) => {
     try {
         const config = { headers: { Authorization: `Bearer ${loggedInUser.token}` } };
-        if (userId) { // If there's a userId, we're editing
-            await axios.put(`/api/users/${userId}`, formData, config);
-        } else { // Otherwise, we're creating
-            await axios.post('/api/users', formData, config);
+        if (userId) {
+            await api.put(`/api/users/${userId}`, formData, config);
+        } else {
+            await api.post('/api/users', formData, config);
         }
         fetchUsers();
         setIsModalOpen(false);
@@ -44,7 +44,7 @@ const TeamPage = () => {
     if (window.confirm('Are you sure you want to delete this user?')) {
         try {
             const config = { headers: { Authorization: `Bearer ${loggedInUser.token}` } };
-            await axios.delete(`/api/users/${userId}`, config);
+            await api.delete(`/api/users/${userId}`, config);
             fetchUsers();
         } catch (error) {
             alert(error.response?.data?.message || 'Could not delete user.');

@@ -1,8 +1,9 @@
+// pages/ProposalsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ProposalFormModal from '../components/ProposalFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const ProposalsPage = () => {
     const [proposals, setProposals] = useState([]);
@@ -15,7 +16,7 @@ const ProposalsPage = () => {
     const fetchProposals = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('/api/proposals', config);
+            const { data } = await api.get('/api/proposals', config);
             setProposals(data);
         } catch (error) { console.error('Failed to fetch proposals', error); }
     };
@@ -26,9 +27,9 @@ const ProposalsPage = () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         try {
             if (editingProposal) {
-                await axios.put(`/api/proposals/${editingProposal._id}`, formData, config);
+                await api.put(`/api/proposals/${editingProposal._id}`, formData, config);
             } else {
-                await axios.post('/api/proposals', formData, config);
+                await api.post('/api/proposals', formData, config);
             }
             fetchProposals();
             setFormOpen(false);
@@ -44,7 +45,7 @@ const ProposalsPage = () => {
     const handleConfirmDelete = async () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         try {
-            await axios.delete(`/api/proposals/${deletingId}`, config);
+            await api.delete(`/api/proposals/${deletingId}`, config);
             fetchProposals();
         } catch (error) { alert('Failed to delete proposal.'); }
         finally { setConfirmOpen(false); setDeletingId(null); }

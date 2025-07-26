@@ -1,13 +1,13 @@
+// pages/TasksPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import TaskFormModal from '../components/TaskFormModal';
 import './TasksPage.css';
+import api from '../api/axios';
 
-// Updated TaskCard to handle opening the edit modal
 const TaskCard = ({ task, onEdit }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task._id });
     const style = { transform: CSS.Transform.toString(transform), transition };
@@ -29,7 +29,7 @@ const TasksPage = () => {
 
     const fetchTasks = async () => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get('/api/tasks', config);
+        const { data } = await api.get('/api/tasks', config);
         setTasks(data);
     };
 
@@ -38,19 +38,35 @@ const TasksPage = () => {
     const handleSaveTask = async (formData, taskId) => {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         try {
-            if (taskId) { // Editing existing task
-                await axios.put(`/api/tasks/${taskId}`, formData, config);
-            } else { // Creating new task
-                await axios.post('/api/tasks', formData, config);
+            if (taskId) {
+                await api.put(`/api/tasks/${taskId}`, formData, config);
+            } else {
+                await api.post('/api/tasks', formData, config);
             }
-            fetchTasks(); // Refresh the board
+            fetchTasks();
             setModalOpen(false);
         } catch (error) {
             alert(error.response.data.message || 'Failed to save task.');
         }
     };
 
-    const handleDragEnd = (event) => { /* ... this function remains the same ... */ };
+    const handleDragEnd = async (event) => {
+        const { active, over } = event;
+        if (active.id !== over.id) {
+            const activeTask = tasks.find((t) => t._id === active.id);
+            const overColumn = over.id;
+
+            if (activeTask && overColumn) {
+                try {
+                    const config = { headers: { Authorization: `Bearer ${user.token}` } };
+                    await api.put(`/api/tasks/${activeTask._id}/status`, { status: overColumn }, config);
+                    fetchTasks();
+                } catch (error) {
+                    alert('Failed to update task status.');
+                }
+            }
+        }
+    };
 
     const columns = {
         'To Do': tasks.filter(t => t.status === 'To Do'),
@@ -68,7 +84,7 @@ const TasksPage = () => {
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <div className="kanban-board">
                     {Object.entries(columns).map(([columnId, columnTasks]) => (
-                        <div key={columnId} className="kanban-column">
+                        <div key={columnId} className="kanban-column" id={columnId}>
                             <h3>{columnId}</h3>
                             <SortableContext items={columnTasks.map(t => t._id)} strategy={verticalListSortingStrategy}>
                                 {columnTasks.map(task => <TaskCard key={task._id} task={task} onEdit={(t) => { setEditingTask(t); setModalOpen(true); }} />)}

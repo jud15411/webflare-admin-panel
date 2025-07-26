@@ -1,6 +1,7 @@
+// pages/SalesPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
+import api from '../api/axios';
 
 const SalesPage = () => {
   const [leads, setLeads] = useState([]);
@@ -9,8 +10,7 @@ const SalesPage = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data: clients } = await axios.get('/api/clients', config);
-      // Filter for clients with 'Lead' status
+      const { data: clients } = await api.get('/api/clients', config);
       setLeads(clients.filter(client => client.status === 'Lead'));
     };
     if (user?.token) fetchLeads();
@@ -20,7 +20,6 @@ const SalesPage = () => {
     <div className="page-container">
       <div className="page-header">
         <h1>Sales Leads</h1>
-        {/* You could have a button here to add a new lead, which is just adding a new client */}
       </div>
       <div className="table-container">
         <table className="pro-table">

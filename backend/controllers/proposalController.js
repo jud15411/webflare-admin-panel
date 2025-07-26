@@ -58,7 +58,7 @@ export const deleteProposal = async (req, res) => {
     try {
         const proposal = await Proposal.findById(req.params.id);
         if (proposal) {
-            await proposal.remove();
+            await proposal.deleteOne();
             res.json({ message: 'Proposal removed' });
         } else {
             res.status(404).json({ message: 'Proposal not found' });

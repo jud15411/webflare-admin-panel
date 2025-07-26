@@ -1,16 +1,16 @@
+// pages/ClientsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import ClientFormModal from '../components/ClientFormModal'; // <-- Import the modal
-import ConfirmModal from '../components/ConfirmModal'; 
+import ClientFormModal from '../components/ClientFormModal';
+import ConfirmModal from '../components/ConfirmModal';
 import api from '../api/axios';
 
 const ClientsPage = () => {
   const [clients, setClients] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState(null); // To hold data for editing
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // <-- Add state for confirm modal
-  const [clientToDelete, setClientToDelete] = useState(null); 
+  const [editingClient, setEditingClient] = useState(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState(null);
   const { user } = useContext(AuthContext);
 
   const fetchClients = async () => {
@@ -24,25 +24,23 @@ const ClientsPage = () => {
   }, [user]);
 
   const handleOpenModal = (client = null) => {
-    setEditingClient(client); // If client is passed, we're editing
+    setEditingClient(client);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingClient(null); // Clear editing data
+    setEditingClient(null);
   };
 
   const handleSaveClient = async (formData) => {
     const config = { headers: { Authorization: `Bearer ${user.token}` } };
     if (editingClient) {
-      // Update existing client
       await api.put(`/api/clients/${editingClient._id}`, formData, config);
     } else {
-      // Create new client
       await api.post('/api/clients', formData, config);
     }
-    fetchClients(); // Refresh the client list
+    fetchClients();
     handleCloseModal();
   };
 
@@ -55,7 +53,7 @@ const ClientsPage = () => {
     try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         await api.delete(`/api/clients/${clientToDelete}`, config);
-        fetchClients(); // Refresh the client list
+        fetchClients();
     } catch (error) {
         alert('Failed to delete client.');
         console.error(error);
@@ -73,10 +71,16 @@ const ClientsPage = () => {
       </div>
 
       <div className="table-container">
-        {/* ... table code remains the same ... */}
-        {/* Add onClick handlers to the Edit button */}
         <table className="pro-table">
-          {/* ... thead ... */}
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
           <tbody>
             {clients.map((client) => (
               <tr key={client._id}>

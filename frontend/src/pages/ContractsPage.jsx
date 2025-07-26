@@ -1,8 +1,9 @@
+// pages/ContractsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ContractFormModal from '../components/ContractFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const ContractsPage = () => {
   const [contracts, setContracts] = useState([]);
@@ -13,11 +14,10 @@ const ContractsPage = () => {
 
   const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  // --- THIS IS THE CORRECTED FUNCTION ---
   const fetchContracts = async () => {
     try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        const { data } = await axios.get('/api/contracts', config);
+        const { data } = await api.get('/api/contracts', config);
         setContracts(data);
     } catch (error) {
         console.error('Failed to fetch contracts', error);
@@ -38,7 +38,7 @@ const ContractsPage = () => {
                 Authorization: `Bearer ${user.token}`
             }
         };
-        await axios.post('/api/contracts', formData, config);
+        await api.post('/api/contracts', formData, config);
         fetchContracts();
         setIsFormModalOpen(false);
     } catch (error) {
@@ -55,7 +55,7 @@ const ContractsPage = () => {
   const handleConfirmDelete = async () => {
     try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        await axios.delete(`/api/contracts/${contractToDelete}`, config);
+        await api.delete(`/api/contracts/${contractToDelete}`, config);
         fetchContracts();
     } catch (error) {
         alert('Failed to delete contract.');

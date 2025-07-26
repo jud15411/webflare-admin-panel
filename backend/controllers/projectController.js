@@ -39,7 +39,7 @@ export const updateProject = async (req, res) => {
 export const deleteProject = async (req, res) => {
     const project = await Project.findById(req.params.id);
     if (project) {
-        await project.remove();
+        await project.deleteOne();
         res.json({ message: 'Project removed' });
     } else {
         res.status(404).send('Project not found');

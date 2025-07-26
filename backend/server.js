@@ -25,6 +25,10 @@ import businessSettingsRoutes from './routes/businessSettingsRoutes.js';
 import payoutRoutes from './routes/payoutRoutes.js';
 import stripeRoutes from './routes/stripeRoutes.js';
 
+// Client Facing Website
+import serviceRoutes from './routes/serviceRoutes.js';
+import publicRoutes from './routes/publicRoutes.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.resolve();
@@ -38,40 +42,15 @@ connectDB();
 const app = express();
 
 // Middleware
-const allowedOrigins = [
-  'http://localhost:3000',
-  process.env.CLIENT_URL,
-];
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        process.env.CLIENT_URL
+    ],
+    credentials: true
+}));
 
 app.use(express.json());
-
-
-/*
-const routesPath = path.join(__dirname, 'routes');
-const routeFiles = fs.readdirSync(routesPath).filter(file => file.endsWith('.js'));
-
-console.log('--- Loading Routes ---');
-routeFiles.forEach(file => {
-  console.log(`Loading: ${file}`);
-  const route = require(path.join(routesPath, file)); // Note: Using require for simplicity here
-  app.use(`/api/${file.replace('Routes.js', '')}`, route.default || route);
-});
-console.log('--- All Routes Loaded ---');
-*/
 
 // Routes
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
@@ -94,6 +73,10 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', businessSettingsRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/stripe', stripeRoutes);
+
+// Client Facing Website
+app.use('/api/services', serviceRoutes); // For admin management
+app.use('/api/public', publicRoutes);   // For the public client site
 
 // Simple test route
 app.get('/', (req, res) => {

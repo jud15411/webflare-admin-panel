@@ -1,7 +1,8 @@
+// pages/TimeLogReportPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import './ReportsPage.css'; // Reuse the stat card styles
+import './ReportsPage.css';
+import api from '../api/axios';
 
 const TimeLogReportPage = () => {
     const [logs, setLogs] = useState([]);
@@ -18,16 +19,15 @@ const TimeLogReportPage = () => {
         try {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` },
-                params: { startDate, endDate }, // Pass dates as query params
+                params: { startDate, endDate },
             };
-            const { data } = await axios.get('/api/timelogs', config);
+            const { data } = await api.get('/api/timelogs', config);
             setLogs(data);
         } catch (error) {
             console.error("Failed to fetch time log report", error);
         }
     };
 
-    // Calculate total hours whenever the logs change
     useEffect(() => {
         const total = logs.reduce((sum, log) => sum + log.hours, 0);
         setTotalHours(total);
@@ -38,8 +38,6 @@ const TimeLogReportPage = () => {
             <div className="page-header">
                 <h1>Time Log Report</h1>
             </div>
-
-            {/* Filter Section */}
             <div className="settings-card" style={{ marginBottom: '30px' }}>
                 <h3>Filter by Date</h3>
                 <div className="date-filter-controls">
@@ -54,8 +52,6 @@ const TimeLogReportPage = () => {
                     <button onClick={fetchReport} className="btn btn-primary">Run Report</button>
                 </div>
             </div>
-
-            {/* Summary Section */}
             <div className="stat-cards-grid" style={{ marginBottom: '30px' }}>
                  <div className="stat-card">
                     <div className="stat-card-info">
@@ -64,8 +60,6 @@ const TimeLogReportPage = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Results Table */}
             <div className="table-container">
                 <table className="pro-table">
                     <thead>

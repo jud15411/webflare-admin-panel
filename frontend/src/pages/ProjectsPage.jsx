@@ -1,8 +1,9 @@
+// pages/ProjectsPage.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ProjectFormModal from '../components/ProjectFormModal';
 import ConfirmModal from '../components/ConfirmModal';
+import api from '../api/axios';
 
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
@@ -15,7 +16,7 @@ const ProjectsPage = () => {
   const fetchProjects = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.get('/api/projects', config);
+      const { data } = await api.get('/api/projects', config);
       setProjects(data);
     } catch (error) {
       console.error("Failed to fetch projects", error);
@@ -30,9 +31,9 @@ const ProjectsPage = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       if (editingProject) {
-        await axios.put(`/api/projects/${editingProject._id}`, formData, config);
+        await api.put(`/api/projects/${editingProject._id}`, formData, config);
       } else {
-        await axios.post('/api/projects', formData, config);
+        await api.post('/api/projects', formData, config);
       }
       fetchProjects();
       setFormOpen(false);
@@ -50,7 +51,7 @@ const ProjectsPage = () => {
   const handleConfirmDelete = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.delete(`/api/projects/${deletingId}`, config);
+      await api.delete(`/api/projects/${deletingId}`, config);
       fetchProjects();
     } catch (error) {
       alert('Failed to delete project.');

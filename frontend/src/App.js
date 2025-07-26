@@ -25,13 +25,14 @@ import KnowledgeBasePage from './pages/KnowledgeBasePage';
 import SoftwareAssetsPage from './pages/SoftwareAssetsPage';
 import TasksPage from './pages/TasksPage';
 import PayoutsPage from './pages/PayoutsPage';
+import ServicesPage from './pages/ServicesPage';
 
 
 // --- Layout Component with a Full-Featured Sidebar ---
 const AppLayout = () => {
   const { user, logout } = useContext(AuthContext);
   const { settings } = useContext(BusinessContext);
-  const [openDropdowns, setOpenDropdowns] = useState({}); // Use an object to track multiple dropdowns
+  const [openDropdowns, setOpenDropdowns] = useState({});
 
   if (!user) {
     return <Navigate to="/login" />;
@@ -62,7 +63,8 @@ const AppLayout = () => {
       },
       {
         label: 'Company', isDropdown: true, icon: '🏢',
-        sub: [ { path: '/knowledge-base', label: 'Knowledge Base' }, { path: '/software', label: 'Software Assets' }, { path: '/reports', label: 'Reports' }, { path: '/settings', label: 'Settings' } ],
+        // --- THIS IS THE UPDATED LINE ---
+        sub: [ { path: '/services', label: 'Website Services' }, { path: '/knowledge-base', label: 'Knowledge Base' }, { path: '/software', label: 'Software Assets' }, { path: '/reports', label: 'Reports' }, { path: '/settings', label: 'Settings' } ],
       },
     ],
     developer: [
@@ -77,7 +79,6 @@ const AppLayout = () => {
         },
     ],
     cto: [
-        // CTO sees a mix of developer and management views
         { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
         {
           label: 'Financials', isDropdown: true, icon: '💵',
@@ -138,7 +139,7 @@ const AppLayout = () => {
   );
 };
 
-// --- Main App Component with All New Routes ---
+
 function App() {
   return (
     <Router>
@@ -157,7 +158,6 @@ function App() {
           <Route path="/reports/time-logs" element={<TimeLogReportPage />} />
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/payouts" element={<PayoutsPage />} />
-          {/* --- ADDING ALL NEW ROUTES --- */}
           <Route path="/proposals" element={<ProposalsPage />} />
           <Route path="/expenses" element={<ExpensesPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
@@ -165,6 +165,8 @@ function App() {
           <Route path="/payroll" element={<PayrollPage />} />
           <Route path="/knowledge-base" element={<KnowledgeBasePage />} />
           <Route path="/software" element={<SoftwareAssetsPage />} />
+          {/* --- THIS IS THE NEWLY ADDED ROUTE --- */}
+          <Route path="/services" element={<ServicesPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

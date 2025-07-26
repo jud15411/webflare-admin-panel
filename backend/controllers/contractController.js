@@ -71,7 +71,7 @@ export const deleteContract = async (req, res) => {
                 }
             });
 
-            await contract.remove();
+            await contract.deleteOne();
             res.json({ message: 'Contract removed successfully.' });
         } else {
             res.status(404).json({ message: 'Contract not found' });

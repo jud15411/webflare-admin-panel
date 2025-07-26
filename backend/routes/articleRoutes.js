@@ -1,18 +1,17 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware.js';
 import { hasRole } from '../middleware/roleMiddleware.js';
-import { getArticles, createArticle, updateArticle, deleteArticle } from '../controllers/articleController.js';
+import { getArticles, getArticleById, createArticle, updateArticle, deleteArticle } from '../controllers/articleController.js';
 
 const router = express.Router();
 
-router.use(protect, hasRole('ceo', 'cto'));
-
 router.route('/')
-    .get(getArticles)
-    .post(createArticle);
+    .get(protect, getArticles)
+    .post(protect, hasRole('ceo'), createArticle);
 
 router.route('/:id')
-    .put(updateArticle)
-    .delete(deleteArticle);
+    .get(protect, getArticleById)
+    .put(protect, hasRole('ceo'), updateArticle)
+    .delete(protect, hasRole('ceo'), deleteArticle);
 
 export default router;

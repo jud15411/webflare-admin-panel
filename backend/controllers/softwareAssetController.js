@@ -34,7 +34,7 @@ export const deleteSoftwareAsset = async (req, res) => {
     try {
         const asset = await SoftwareAsset.findById(req.params.id);
         if (asset) {
-            await asset.remove();
+            await asset.deleteOne();
             res.json({ message: 'Asset removed' });
         } else {
             res.status(404).json({ message: 'Asset not found' });
